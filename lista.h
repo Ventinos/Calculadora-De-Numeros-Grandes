@@ -1,8 +1,7 @@
 #ifndef LISTA_H_INCLUDED
 #define LISTA_H_INCLUDED
 
-static FILE *erro;
-static FILE *hist;
+void criarLogs();
 //Numeros:
 typedef struct listaNumero Numero;
 Numero *criar();
