@@ -1,7 +1,6 @@
 #ifndef LISTA_H_INCLUDED
 #define LISTA_H_INCLUDED
 
-void criarLogs();
 //Numeros:
 typedef struct listaNumero Numero;
 Numero *criar();
@@ -29,13 +28,13 @@ void mostrarHistorico(Historico *l);
 int opcaoA(Numero *a, Numero *b, Numero *c, Historico *h);
 
 //Operações diversas:
-int soma(Historico *l, Numero *n1, Numero *n2, Numero *n3);
+Numero *soma(Historico *l, Numero *n1, Numero *n2);
 //Numero *somaAlt(Historico *l, Numero *n1, Numero *n2, int retorno);
-int subtracao(Historico *l, Numero *n1, Numero *n2, Numero *n3);
+Numero *subtracao(Historico *l, Numero *n1, Numero *n2);
 //Numero *subtracaoAlt(Historico *l, Numero *n1, Numero *n2);
 int multiplicacao(Historico *l, Numero *n1, Numero *n2, Numero *n3);
 //Numero *multiplicacaoAlt(Historico *l, Numero *n1, Numero *n2);
 int divisao(Historico *l, Numero *n1, Numero *n2, Numero *n3);
 //Numero *divisaoAlt(Historico *l, Numero *n1, Numero *n2);
-
+void criarLogs();
 #endif

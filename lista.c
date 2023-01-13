@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include "lista.h"
 
-static FILE *erro;
-static FILE *hist;
+FILE *erro;
+FILE *hist;
 
 //construcao de um numero:
 typedef struct no
@@ -39,44 +39,39 @@ typedef struct listaHistorico
 void criarLogs()
 {
     hist=fopen("historico.txt","w+");
-    erro=fopen("log.txt","w+");
+    erro=fopen("log.txt","a+");
     fclose(erro);
     fclose(hist);
 }
-
 //funcoes Numero:
 Numero *criar()
 {
-    erro=fopen("log.txt","a+");
-    fprintf(erro,"\nNumero Criado");
     Numero *l = (Numero*)malloc(sizeof(Numero));
+    if(l==NULL)
+        fprintf(erro,"\nERRO AO CRIAR NUMERO");
+    fprintf(erro,"\nNumero Criado");
     l->inicio = NULL;
     return l;
 }
 
 int listaVazia(Numero *l)
 {
-    hist=fopen("historico.txt","a+");
-    erro=fopen("log.txt","a+");
+    
     if (l == NULL)
     {
         fprintf(erro,"\nNumero Nulo em listaVazia");
         return 2;
-    }
+    } 
     if (l->inicio == NULL) return 0;
-    fclose(hist);
-    fclose(erro);
     return 1;
 }
 
 int inserirInicio(Numero *l, int it) {
-    hist=fopen("historico.txt","a+");
-    erro=fopen("log.txt","a+");
     if (l == NULL)
     {
         fprintf(erro,"\nNumero Nulo em inserirInicio");
         return 2;
-    }
+    } 
     NoNumero *no = (NoNumero *)malloc(sizeof(NoNumero));
     no->valor = it;
     no->prox = l->inicio;
@@ -84,20 +79,16 @@ int inserirInicio(Numero *l, int it) {
     if (l->inicio != NULL)
         l->inicio->ant = no;
     l->inicio = no;
-    fclose(hist);
-    fclose(erro);
     return 0;
 }
 
 int inserirFim(Numero *l, int it)
 {
-    hist=fopen("historico.txt","a+");
-    erro=fopen("log.txt","a+");
     if (l == NULL)
     {
         fprintf(erro,"\nNumero Nulo em inserirFim");
         return 2;
-    }
+    } 
     if (listaVazia(l) == 0)
         return inserirInicio(l,it);
     NoNumero *noLista = l->inicio;
@@ -108,8 +99,6 @@ int inserirFim(Numero *l, int it)
     no->prox = NULL;
     no->ant = noLista;
     noLista->prox = no;
-    fclose(hist);
-    fclose(erro);
     return 0;
 }
 
@@ -117,34 +106,43 @@ void limpar(Numero *l)
 {
     l->sinal = ' ';
     while (listaVazia(l) != 0)
-        removerFim(l);
+        removerInicio(l);
 }
 
 void mostrar(Numero *l)
 {
-    int y=5;
+    int i,j;
     if (l != NULL)
     {
         NoNumero *noLista = l->inicio;
         if(l->sinal=='-')
-        printf("%c",l->sinal);
+            printf("%c",l->sinal);
         while (noLista != NULL)
         {
-            if(noLista->ant!=NULL)
+            /*if(noLista->ant!=NULL)
             {
-                for(int i=10;i<=100000;i=i*10)
+                for(i=10;i<=100;i=i*10)
                 {
-                    if((noLista->valor)<i)
+                    y--;
+                    if((noLista->valor)==0)
                     {
-                        for(int i=0;i<y;i++)
+                        for(j=0;j<5;j++)
                         {
                             printf("0");
                         }
-                        break;
+                        i=1000;
                     }
-                    y--;
+                    else if((noLista->valor)<i)
+                    {
+                        for(j=0;j<y;j++)
+                        {
+                            printf("0");
+                        }
+                        i=1000;
+                    }
                 }
             }
+            y=6;*/
             printf("%d",noLista->valor);
             noLista = noLista->prox;
         }
@@ -154,13 +152,11 @@ void mostrar(Numero *l)
 
 int removerFim(Numero *l)
 {
-    hist=fopen("historico.txt","a+");
-    erro=fopen("log.txt","a+");
     if (l == NULL)
     {
         fprintf(erro,"\nNumero Nulo em removerFim");
         return 2;
-    }
+    } 
     if (listaVazia(l) == 0)
         return 1;
     NoNumero *noLista = l->inicio;
@@ -171,20 +167,16 @@ int removerFim(Numero *l)
     else
         noLista->ant->prox = NULL;
     free(noLista);
-    fclose(hist);
-    fclose(erro);
     return 0;
 }
 
-int removerInicio(Numero *l)
+int removerInicio(Numero *l) 
 {
-    hist=fopen("historico.txt","a+");
-    erro=fopen("log.txt","a+");
     if (l == NULL)
     {
         fprintf(erro,"\nNumero Nulo em removerInicio");
         return 2;
-    }
+    } 
     if (listaVazia(l) == 0)
         return 1;
     NoNumero *noLista = l->inicio;
@@ -192,8 +184,6 @@ int removerInicio(Numero *l)
     if (l->inicio != NULL)
         l->inicio->ant = NULL;
     free(noLista);
-    fclose(hist);
-    fclose(erro);
     return 0;
 }
 
@@ -207,28 +197,23 @@ Historico *criarHistorico()
 
 int historicoVazio(Historico *l)
 {
-    hist=fopen("historico.txt","a+");
-    erro=fopen("log.txt","a+");
     if (l == NULL)
     {
         fprintf(erro,"\nHistorico Nulo em historicoVazio");
         return 2;
-    }
+    } 
     if (l->inicio == NULL) return 0;
-    fclose(hist);
-    fclose(erro);
+
     return 1;
 }
 
 int inserirFimHistorico(Historico *l, Numero *n1, Numero *n2, Numero *n3, char op)
 {
-    hist=fopen("historico.txt","a+");
-    erro=fopen("log.txt","a+");
     if (l == NULL)
     {
         fprintf(erro,"\nHistorico Nulo em inserirFimHistorico");
         return 2;
-    }
+    } 
     NoOperacao *noLista = l->inicio;
     if(noLista!=NULL)
     {
@@ -240,11 +225,9 @@ int inserirFimHistorico(Historico *l, Numero *n1, Numero *n2, Numero *n3, char o
     no->a=criar();
     no->b=criar();
     no->c=criar();
-
-    copia(n1,no->a);
-    copia(n2,no->b);
-    copia(n3,no->c);
-
+    copia(no->a, n1);
+    copia(no->b, n2);
+    copia(no->c, n3);
     no->operacao = op;
 
     if(noLista==NULL)
@@ -257,20 +240,16 @@ int inserirFimHistorico(Historico *l, Numero *n1, Numero *n2, Numero *n3, char o
         no->prox = noLista->prox;
         noLista->prox = no;
     }
-    fclose(hist);
-    fclose(erro);
     return 0;
 }
 
 int removerFimHistorico(Historico *l)
 {
-    hist=fopen("historico.txt","a+");
-    erro=fopen("log.txt","a+");
     if (l == NULL)
     {
         fprintf(erro,"\nHistorico Nulo em removerFimHistorico");
         return 2;
-    }
+    } 
     if (historicoVazio(l) == 0) return 1;
 
     NoOperacao *noAuxiliar = NULL;
@@ -286,8 +265,7 @@ int removerFimHistorico(Historico *l)
     else noAuxiliar->prox = NULL;
 
     free(noLista);
-    fclose(hist);
-    fclose(erro);
+    
     return 0;
 }
 
@@ -305,7 +283,7 @@ void mostrarHistorico(Historico *l)
     {
        printf("Historico:\n");
        NoOperacao *noLista = l->inicio;
-
+       
        while (noLista != NULL)
        {
           mostrar(noLista->a);
@@ -323,8 +301,6 @@ void mostrarHistorico(Historico *l)
 //se quiser me chama no zap que eu explico, ta funcionando perfeitamente, so eh meio foda de entender.
 int opcaoA(Numero *a, Numero *b, Numero *c, Historico *h)
 {
-    hist=fopen("historico.txt","a+");
-    erro=fopen("log.txt","a+");
     if(a==NULL || b==NULL || c==NULL || h==NULL)
     {
         fprintf(erro,"\nNumero Nulo em opcaoA");
@@ -343,11 +319,9 @@ int opcaoA(Numero *a, Numero *b, Numero *c, Historico *h)
     {
         if(teste=='-')
             a->sinal='-';
-
         else
             ungetc(teste,stdin);
-
-        scanf("%6d",&userInputA);
+        scanf("%1d",&userInputA);
         inserirFim(a,userInputA);
         userInputA=0;
         teste=getc(stdin);
@@ -356,13 +330,14 @@ int opcaoA(Numero *a, Numero *b, Numero *c, Historico *h)
     if(a->sinal!='-')
         a->sinal='+';
     printf("\nA=");
-    corrige(a);
+    //corrige(a);
     mostrar(a);
 
     printf("\nInsira a operacao:");
     scanf("%c",&operacao);
     fflush(stdin);
 
+    lixo = getc(stdin);
     printf("\nInsira o Segundo Numero: ");
     teste=getc(stdin);
     while(teste!='\n')
@@ -373,7 +348,7 @@ int opcaoA(Numero *a, Numero *b, Numero *c, Historico *h)
         else
             ungetc(teste,stdin);
 
-        scanf("%6d",&userInputA);
+        scanf("%1d",&userInputA);
         inserirFim(b,userInputA);
         userInputA=0;
         teste=getc(stdin);
@@ -382,7 +357,7 @@ int opcaoA(Numero *a, Numero *b, Numero *c, Historico *h)
     if(b->sinal!='-')
         b->sinal='+';
     printf("\nB=");
-    corrige(b);
+    //corrige(b);
     mostrar(b);
     //printf("\n\n\n%c %c",a->sinal,b->sinal);
 
@@ -390,26 +365,24 @@ int opcaoA(Numero *a, Numero *b, Numero *c, Historico *h)
     {
 
         case '+':
-            r = soma(h,a,b,c);
-            if(r==0)
-            {
-                printf("\nsoma feita!");
-                printf("\no resultado da soma eh:");
-                mostrar(c);
-            }
+        {
+            c=soma(h,a,b);
+            printf("\nsoma feita!");
+            printf("\no resultado da soma eh:");
+            mostrar(c);
             break;
+        }
         case '-':
-            r = subtracao(h,a,b,c);
-            if(r==0)
-            {
-                printf("\nsubtracao feita!");
-                printf("\no resultado da subtracao eh:");
-                mostrar(c);
-            }
+        {
+            c = subtracao(h,a,b);
+            printf("\nsubtracao feita!");
+            printf("\no resultado da subtracao eh:");
+            mostrar(c);
             break;
-
+        }
         case '*':
-            r = multiplicacao(h,a,b,c);
+        {
+            //r = multiplicacao(h,a,b,c);
             if(r==0)
             {
                 printf("\nmultiplicacao feita!");
@@ -419,8 +392,9 @@ int opcaoA(Numero *a, Numero *b, Numero *c, Historico *h)
             if(r==1)
                 printf("ero");
             break;
-
+        }
         case '/':
+        {
             r = divisao(h,a,b,c);
             if(r==0)
             {
@@ -429,21 +403,18 @@ int opcaoA(Numero *a, Numero *b, Numero *c, Historico *h)
                 mostrar(c);
             }
             break;
-
+        }
         default:
             printf("\noperacao invalida!ERRO!");
             return -1;
             break;
     }
-    fclose(hist);
-    fclose(erro);
-
+    
 }
 
-int corrige(Numero *l)
+/*int corrige(Numero *l)
 {
-    hist=fopen("historico.txt","a+");
-    erro=fopen("log.txt","a+");
+    
     if(l==NULL)
     {
         fprintf(erro,"\nNumero Nulo em corrige");
@@ -454,12 +425,12 @@ int corrige(Numero *l)
     NoNumero *nonum = l->inicio;
     while(nonum->prox != NULL)
         nonum = nonum->prox;
-
+    
     //printf("\nno antes: %d",nonum->valor);
     NoNumero *aux = nonum->ant;
     while(aux != NULL)//aux é o anterior de nonum, se aux é NULL, é pq o nonum é o primeiro no da lista
     {
-        for(i=10;i<=100000;i=i*10)//i é fator de correçao de algarismo, que tb verifica o limite do valor de nonum(se for menor que 10^6, precisa de correçao)
+        for(i=10;i<=100;i=i*10)//i é fator de correçao de algarismo, que tb verifica o limite do valor de nonum(se for menor que 10^6, precisa de correçao)
         {
             if(nonum->valor==(nonum->valor)%i)
             {
@@ -471,24 +442,22 @@ int corrige(Numero *l)
         nonum = nonum->ant;
         aux = aux->ant;
     }
-
+    
     //while(nonum->prox != NULL)
     //    nonum = nonum->prox;
-
+    
     //printf("\nno depois: %d",nonum->valor);
     //printf("\n\n\n");
-    fclose(hist);
-    fclose(erro);
+    
     return 0;
-}
+}*/
 
 int tamanho(Numero *l)
 {
-    hist=fopen("historico.txt","a+");
-    erro=fopen("log.txt","a+");
+    
     if(l==NULL)
     {
-        fprintf(erro,"\nNumero Nulo em opcaoA");
+        fprintf(erro,"\nNumero Nulo em tamanho");
         return -1;
     }
     if(listaVazia(l)==0) return 0;
@@ -499,13 +468,17 @@ int tamanho(Numero *l)
         i++;
         nolista=nolista->prox;
     }
-    fclose(hist);
-    fclose(erro);
+    
     return i;
 }
 
 int copia(Numero *l, Numero *r)
 {
+    if(l==NULL || r==NULL)
+    {
+        fprintf(erro,"\nNumero Nulo em copia");
+        return -1;
+    }
     limpar(r);
     NoNumero *no = l->inicio;
     while(no!=NULL)
@@ -522,62 +495,57 @@ int copia(Numero *l, Numero *r)
 //no fim tudo seria inserido no historico
 //B)
 
-int soma(Historico *l, Numero *n1, Numero *n2, Numero *n3)
+Numero *soma(Historico *l, Numero *n1, Numero *n2)
 {
-    hist=fopen("historico.txt","a+");
-    erro=fopen("log.txt","a+");
     if(l==NULL)
     {
         fprintf(erro,"\nHistorico Nulo em soma");
-        return 4;
+        return NULL;
     }
-    if(n1==NULL || n2==NULL || n3==NULL)
+    if(n1==NULL || n2==NULL)
     {
-        fprintf(erro,"\nNumero Nulo em somaAlt");
-        return 2;
-    }
-    if (listaVazia(n1) == 0) return 1;
-    if (listaVazia(n2) == 0) return 1;
-
+        fprintf(erro,"\nNumero Nulo em soma");
+        return NULL;
+    } 
+    if (listaVazia(n1) == 0) return NULL;
+    if (listaVazia(n2) == 0) return NULL;
+    Numero *n3 = criar();
+    
     if(tamanho(n1)==1)
     {
         if(n1->inicio->valor==0)
         {
             copia(n2,n3);
-            printf("\nRESULTADO: ");
-            mostrar(n3);
             inserirFimHistorico(l,n1,n2,n3,'+');
             fclose(hist);
             fclose(erro);
-            return 0;
+            return n3;
         }
     }
-
+    
     if(tamanho(n2)==1)
     {
         if(n2->inicio->valor==0)
         {
             copia(n1,n3);
-            printf("\nRESULTADO: ");
-            mostrar(n3);
             inserirFimHistorico(l,n1,n2,n3,'+');
             fclose(hist);
             fclose(erro);
-            return 0;
+            return n3;
         }
     }
 
-    if((n1->sinal=='-')&&(n2->sinal=='+')) return subtracao(l,n1,n2,n3);
-    if((n1->sinal=='+')&&(n2->sinal=='-')) return subtracao(l,n1,n2,n3);
+    if((n1->sinal=='-')&&(n2->sinal=='+')) return subtracao(l,n1,n2);
+    if((n1->sinal=='+')&&(n2->sinal=='-')) return subtracao(l,n1,n2);
     if((n1->sinal=='-')&&(n2->sinal=='-')) n3->sinal='-';
     else n3->sinal='+';
     int y;
     NoNumero *a = n1->inicio;
     NoNumero *b = n2->inicio;
-
+    
     while(a->prox != NULL)
         a = a->prox;
-
+    
     while(b->prox != NULL)
         b = b->prox;
 
@@ -589,6 +557,7 @@ int soma(Historico *l, Numero *n1, Numero *n2, Numero *n3)
         b = b->ant;
     }
 
+    printf("\n");
     if(a==NULL)
     {
         while(b!=NULL)
@@ -607,63 +576,78 @@ int soma(Historico *l, Numero *n1, Numero *n2, Numero *n3)
         }
     }
 
-    //correção do resultado
     NoNumero *c = n3->inicio;
     while(c->prox != NULL)
         c = c->prox;
 
     while(c!=NULL)
     {
-        if(c->valor>1000000)
+        if(c->valor>=10)
         {
-            c->valor = (c->valor)%1000000;
+            c->valor = (c->valor)%10;
             if(c->ant!=NULL)
-                c->ant = c->ant + 1;
+                (c->ant)->valor = (c->ant)->valor + 1;
             else
                 inserirInicio(n3,1);
         }
         c = c->ant;
     }
-    /*printf("\nRESULTADO: ");
-    mostrar(n3);*/
-    inserirFimHistorico(l,n1,n2,n3,'+');
-    fclose(hist);
-    fclose(erro);
-    return 0;
+    //inserirFimHistorico(l,n1,n2,n3,'+');
+    /*NoNumero *m1=n1->inicio;
+    while(m1!=NULL)
+    {
+        fprintf(erro,"\n%d ");
+        m1=m1->prox;
+    }
+    fprintf(hist,"+");
+    m1=n2->inicio;
+    while(m1!=NULL)
+    {
+        fprintf(erro," %d");
+        m1=m1->prox;
+    }
+    fprintf(erro,"=");
+    m1=n3->inicio;
+    while(m1!=NULL)
+    {
+        fprintf(erro," %d");
+        m1=m1->prox;
+    }*/
+    return n3;
 }
 
-int subtracao(Historico *l, Numero *n1, Numero *n2, Numero *n3)
+Numero *subtracao(Historico *l, Numero *n1, Numero *n2)
 {
-    hist=fopen("historico.txt","a+");
-    erro=fopen("log.txt","a+");
+    
     if(l==NULL)
     {
         fprintf(erro,"\nHistorico Nulo em subtracao");
-        return 4;
+        return NULL;
     }
-    if(n1==NULL || n2==NULL || n3==NULL)
+    if(n1==NULL || n2==NULL)
     {
-        fprintf(erro,"\nNumero Nulo em somaAlt");
-        return 2;
-    }
-    if (listaVazia(n1) == 0) return 1;
-    if (listaVazia(n2) == 0) return 1;
+        fprintf(erro,"\nNumero Nulo em subtracao");
+        return NULL;
+    } 
+    if (listaVazia(n1) == 0) return NULL;
+    if (listaVazia(n2) == 0) return NULL;
+    Numero *n3 = criar();
 
     if((n1->sinal=='-')&&(n2->sinal=='+'))
     {
         n2->sinal = '-';
-        soma(l,n1,n2,n3);
+        n3 = soma(l,n1,n2);
         n2->sinal = '+';
-        return 0;
+        return n3;
     }
     if((n1->sinal=='+')&&(n2->sinal=='-'))
     {
         n2->sinal = '+';
-        soma(l,n1,n2,n3);
+        n3 = soma(l,n1,n2);
         n2->sinal = '-';
-        return 0;
+        return n3;
     }
-
+    
     if((n1->sinal=='+')&&(n2->sinal=='+'))
     {
         int n = tamanho(n1);
@@ -676,7 +660,7 @@ int subtracao(Historico *l, Numero *n1, Numero *n2, Numero *n3)
         else if(n<m)
         {
             n3->sinal = '-';
-            return subtracao(l,n2,n1,n3);
+            return subtracao(l,n2,n1);
         }
         else
         {
@@ -694,7 +678,7 @@ int subtracao(Historico *l, Numero *n1, Numero *n2, Numero *n3)
 				else if(no1->valor < no2->valor)
 				{
 					n3->sinal = '-';
-                    return subtracao(l,n2,n1,n3);
+                    return subtracao(l,n2,n1);
 				}
                 else
                 {
@@ -706,7 +690,7 @@ int subtracao(Historico *l, Numero *n1, Numero *n2, Numero *n3)
 			}
         }
     }
-
+    
     if((n1->sinal=='-')&&(n2->sinal=='-'))
     {
         int n = tamanho(n1);
@@ -718,7 +702,7 @@ int subtracao(Historico *l, Numero *n1, Numero *n2, Numero *n3)
         else if(n<m)
         {
             n3->sinal = '+';
-            return subtracao(l,n2,n1,n3);
+            return subtracao(l,n2,n1);
         }
         else
         {
@@ -736,7 +720,7 @@ int subtracao(Historico *l, Numero *n1, Numero *n2, Numero *n3)
 				else if(no1->valor < no2->valor)
 				{
 					n3->sinal = '+';
-                    return subtracao(l,n2,n1,n3);
+                    return subtracao(l,n2,n1);
 				}
                 else
                 {
@@ -771,7 +755,7 @@ int subtracao(Historico *l, Numero *n1, Numero *n2, Numero *n3)
             for(int y=0;y<i;y++)
             {
                 aux1->valor = aux1->valor - 1;
-                (aux1->prox)->valor = (aux1->prox)->valor + 1000000;
+                (aux1->prox)->valor = (aux1->prox)->valor + 10;
                 aux1 = aux1->prox;
             }
         }
@@ -807,139 +791,146 @@ int subtracao(Historico *l, Numero *n1, Numero *n2, Numero *n3)
         removerInicio(n3);
     }
 
-    inserirFimHistorico(l,n1,n2,n3,'-');
+    //inserirFimHistorico(l,n1,n2,n3,'-');
     /*printf("\nRESULTADO: ");
     mostrar(n3);*/
-    fclose(hist);
-    fclose(erro);
-    return 0;
+    return n3;
 }
-
+/*
 int multiplicacao(Historico *l, Numero *n1, Numero *n2, Numero *n3)
 {
-    hist=fopen("historico.txt","a+");
-    erro=fopen("log.txt","a+");
+    
     if(l==NULL)
     {
         fprintf(erro,"\nHistorico Nulo em multiplicacao");
         return 4;
     }
-    if(n1==NULL || n2==NULL || n3==NULL)
+    if(n1==NULL || n2==NULL)
     {
-        fprintf(erro,"\nNumero Nulo em somaAlt");
+        fprintf(erro,"\nNumero Nulo em multiplicacao");
         return 2;
     }
+    limpar(n3);
     if (listaVazia(n1) == 0) return 1;
     if (listaVazia(n2) == 0) return 1;
-
-    if(tamanho(n1)==1)
-    {
-        if(n1->inicio->valor==0)
-        {
-            copia(n1,n3);
-            inserirFimHistorico(l,n1,n2,n3,'+');
-            fclose(hist);
-            fclose(erro);
-            return 0;
-        }
-    }
-
-    if(tamanho(n2)==1)
-    {
-        if(n2->inicio->valor==0)
-        {
-            copia(n2,n3);
-            inserirFimHistorico(l,n1,n2,n3,'+');
-            fclose(hist);
-            fclose(erro);
-            return 0;
-        }
-    }
-
-    Numero *res0 = criar();
+    int y,z,i=0,j=0;
+    NoNumero *a = n1->inicio;
+    NoNumero *b = n2->inicio;
+    //NoNumero *a1 = (NoNumero *)malloc(sizeof(NoNumero));
     Numero *res1 = criar();
-    Numero *res2 = criar();
+    Numero *res0 = criar();
+    Numero *help1 = criar();
+    Numero *help = criar();
+    Numero *help2 = criar();
+    Numero *aux = criar();
+    NoNumero *noLista = aux->inicio;
 
-    inserirInicio(res2,2);
-    inserirInicio(res1,1);
     inserirInicio(res0,0);
 
-    Numero *j=criar();
-    Numero *k=criar();
-    Numero *m=criar();
-    Numero *nx=criar();
-    inserirFim(j,0);
-    inserirFim(m,0);
-    inserirFim(k,0);
-    Numero *nr=criar();
-    inserirFim(nr,0);
-
-
-    copia(n1,j);
-    removerFimHistorico(l);
-
-    copia(n2,m);
-    removerFimHistorico(l);
-
-    soma(l,n1,n1,nx);
-    removerFimHistorico(l);
-    limpar(n1);
-
-    subtracao(l,n2,res2,k);
-    removerFim(k);
-    removerFimHistorico(l);
-    limpar(n2);
-
-    copia(k,n2);
-    removerFimHistorico(l);
-    limpar(k);
-
-    while(n2->inicio->valor!=0)
+    while(b->prox != NULL)
+        b = b->prox;
+    
+    res1 = n1;
+    soma(l,n1,n2,n3);
+    
+    while(b!=NULL)
     {
-        soma(l,j,nx,n1);
-        limpar(nx);
-
-        copia(n1,nx);
-        removerFimHistorico(l);
-        limpar(n1);
-
-        subtracao(l,n2,res1,k);
-        removerFimHistorico(l);
-        limpar(n2);
-
-        copia(k,n2);
-        removerFimHistorico(l);
-        limpar(k);
+        while(a->prox != NULL)
+            a = a->prox;
+        //printf("%d",a->valor);
+        while(a!=NULL)
+        {
+            y = (b->valor)%1000;
+            z = (b->valor)/1000;
+            inserirInicio(aux,y*(a->valor));
+            inserirInicio(aux,z*(a->valor));
+            noLista = aux->inicio;//noLista==TuT                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+            noLista = noLista->prox;
+            y = (noLista->valor)/1000;
+            noLista->valor = (noLista->valor)%1000;
+            (noLista->ant)->valor = (noLista->ant)->valor + y;
+            //corrige(aux);
+            while(noLista!=NULL)
+            {
+                if(noLista->valor>1000000)
+                {
+                    noLista->valor = (noLista->valor)%1000000;
+                    if(noLista->ant!=NULL)
+                        (noLista->ant)->valor = (noLista->ant)->valor + 1;
+                    else
+                        inserirInicio(n3,1);
+                }
+                noLista = noLista->ant;
+            }
+            if(j>0)
+            {
+                for(int y = 0;y<j;y++)
+                {
+                    inserirFim(aux,0);
+                }
+            }
+            if(j==0)
+            {
+                copia(aux,help);
+            }
+            else
+            {
+                soma(l,help,aux,help1);
+                removerFimHistorico(l);
+                copia(help1,help);
+                limpar(help1);
+            }
+            limpar(aux);
+            j++;
+            a = a->ant;
+        }
+        j=0;
+        if(i>0)
+        {
+            for(int y=0;y<i;y++)
+                inserirFim(help,0);
+        }
+        if(i==0)
+        {
+            copia(help,res1);
+        }
+        else
+        {
+            soma(l,help,res1,help2);
+            removerFimHistorico(l);
+            copia(help2,res1);
+            limpar(help2);
+        }
+        limpar(help);
+        i++;
+        b = b->ant;
     }
-
-    if((j->sinal=='+')&&(m->sinal=='+')) nx->sinal='+';
-    if((j->sinal=='-')&&(m->sinal=='+')) nx->sinal='-';
-    if((j->sinal=='+')&&(m->sinal=='-')) nx->sinal='-';
-    if((j->sinal=='-')&&(m->sinal=='-')) nx->sinal='+';
-
-    copia(nx,n3);
-    inserirFimHistorico(l,n1,j,n3,'*');
+    copia(res1,n3);
+    if((n1->sinal=='+')&&(n2->sinal=='+')) n3->sinal='+';
+    if((n1->sinal=='-')&&(n2->sinal=='+')) n3->sinal='-';
+    if((n1->sinal=='+')&&(n2->sinal=='-')) n3->sinal='-';
+    if((n1->sinal=='-')&&(n2->sinal=='-')) n3->sinal='+';
+    inserirFimHistorico(l,n1,n2,n3,'*');
+    
     return 0;
-}
+}*/
 
 int divisao(Historico *l, Numero *n1, Numero *n2, Numero *n3)
 {
-    hist=fopen("historico.txt","a+");
-    erro=fopen("log.txt","a+");
+    
     if(l==NULL)
     {
         fprintf(erro,"\nHistorico Nulo em divisao");
         return 4;
     }
-    if(n1==NULL || n2==NULL || n3==NULL)
+    if(n1==NULL || n2==NULL)
     {
         fprintf(erro,"\nNumero Nulo em divisao");
         return 2;
-    }
+    } 
     if (historicoVazio(l) == 0) return 1;
     //coisinhas da operacao
     inserirFimHistorico(l,n1,n2,n3,'/');
-    fclose(hist);
-    fclose(erro);
+    
     return 0;
 }

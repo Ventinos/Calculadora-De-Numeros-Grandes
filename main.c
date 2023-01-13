@@ -70,6 +70,6 @@ int main()
 		op = toupper(op);
 		fflush(stdin);
 	}
-
-    return 0;
+	
+    return 0; 
 }

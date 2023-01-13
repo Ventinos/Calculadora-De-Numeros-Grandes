@@ -1,14 +1,14 @@
 # depslib dependency file v1.0
-1673497785 source:d:\docx\coding\faculdade\aed1\trabalhofinal\cng-alternativa\main.c
+1673053455 source:d:\docx\coding\faculdade\aed1\trabalhofinal\cng-alternativa\main.c
 	<stdio.h>
 	<stdlib.h>
 	<windows.h>
 	<string.h>
 	"lista.h"
 
-1673495045 d:\docx\coding\faculdade\aed1\trabalhofinal\cng-alternativa\lista.h
+1673055501 d:\docx\coding\faculdade\aed1\trabalhofinal\cng-alternativa\lista.h
 
-1673497778 source:d:\docx\coding\faculdade\aed1\trabalhofinal\cng-alternativa\lista.c
+1673094931 source:d:\docx\coding\faculdade\aed1\trabalhofinal\cng-alternativa\lista.c
 	<stdio.h>
 	<stdlib.h>
 	"lista.h"
